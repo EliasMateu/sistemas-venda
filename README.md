@@ -32,65 +32,58 @@ sistema-vendas/
 
 ---
 
-## 🚀 Como rodar o projeto localmente
+## 🐳 Como rodar com Docker (Recomendado)
 
-Para rodar o VendaSys na sua máquina, você vai precisar rodar o **Backend** (sua API) e o **Frontend** (sua interface) separadamente.
-
-Para isso, você vai precisar abrir **duas abas ou janelas do seu terminal**.
+O projeto inteiro (Backend, Frontend e Banco de Dados MySQL) foi configurado para rodar em containers utilizando o **Docker Compose**. Isso significa que você não precisa instalar Node.js ou Banco de Dados diretamente na sua máquina!
 
 ### Pré-requisitos
-- Node.js 18+
-- npm (já vem com o Node)
+- Docker
+- Docker Compose
 
 ---
 
-### Terminal 1: Iniciando a API (Backend)
+### Subindo a aplicação
 
-Abra o terminal na pasta raiz do projeto e siga estes passos:
-
+1. Na raiz do projeto, garanta que suas variáveis de ambiente estejam configuradas. O `.env` padrão já está configurado para o banco de dados do Docker:
 ```bash
-# 1. Entre na pasta do backend
-cd backend
-
-# 2. Instale as dependências
-npm install
-
-# 3. Caso ainda não exista, crie o arquivo de ambiente
-cp .env.example .env
-
-# 4. Inicie o servidor
-npm run start:dev
+# Caso o seu backend/.env ainda não exista:
+cp backend/.env.example backend/.env
 ```
-A API ficará rodando no endereço `http://localhost:3000/api`.
-O banco de dados (SQLite) será criado automaticamente no arquivo `database.sqlite` logo que a API subir.
 
-**Criar o admin padrão inicial:**
-Com a API rodando (ou num terceiro terminal), rode o comando abaixo para popular o banco de dados com seus dados de teste:
+2. Na mesma pasta (onde fica o arquivo `docker-compose.yml`), rode o comando para construir e inicializar tudo:
 ```bash
-npx ts-node -r tsconfig-paths/register scripts/seed.ts
-# Usuário de teste: admin@sistema.com
+docker-compose up -d --build
+```
+
+O comando acima vai:
+- Iniciar um servidor MySQL (Porta `3306`)
+- Construir a imagem Node para a **API** e rodá-la (Porta `3000`)
+- Construir a imagem Node para o **Painel** e rodá-lo (Porta `5173`)
+
+### Acessando os URLs
+- **Acesse o Sistema (Frontend):** http://localhost:5173
+- **Acesse a API (Backend):** http://localhost:3000/api
+
+---
+
+### Comandos Úteis
+
+Para visualizar os logs (ver se deu algum erro na API, por exemplo):
+```bash
+docker-compose logs -f
+```
+
+Para derrubar tudo e desligar os servidores:
+```bash
+docker-compose down
+```
+
+Para popular o banco com um banco de dados de teste (Admin), use o terminal do backend rodando no docker com o comando:
+```bash
+docker exec -it vendas_backend npx ts-node -r tsconfig-paths/register scripts/seed.ts
+# Usuário de log: admin@sistema.com
 # Senha: admin123
 ```
-
----
-
-### Terminal 2: Iniciando o Painel (Frontend)
-
-Mantenha o terminal 1 aberto e rodando! Abra **uma nova aba** do terminal, vá para a raiz do projeto e siga:
-
-```bash
-# 1. Entre na pasta do frontend
-cd frontend
-
-# 2. Instale as dependências
-npm install
-
-# 3. Inicie o servidor do painel
-npm run dev
-```
-
-Pronto! Acesse o painel pelo seu navegador através do link `http://localhost:5173`.
-*(O sistema já está configurado para enxergar automaticamente a API que você deixou rodando na porta 3000).*
 
 ---
 
