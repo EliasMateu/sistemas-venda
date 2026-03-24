@@ -7,12 +7,40 @@ import { Customer } from '../src/modules/customers/entities/customer.entity';
 import { Product } from '../src/modules/products/entities/product.entity';
 import { Sale } from '../src/modules/sales/entities/sale.entity';
 
-const AppDataSource = new DataSource({
-  type: 'sqlite',
-  database: './database.sqlite',
-  entities: [User, Customer, Product, Sale],
-  synchronize: true,
-});
+import 'dotenv/config';
+
+const dbType = process.env.DATABASE_TYPE || 'sqlite';
+
+const AppDataSource = new DataSource(
+  dbType === 'sqlite'
+    ? {
+        type: 'sqlite',
+        database: process.env.DATABASE_PATH || './database.sqlite',
+        entities: [User, Customer, Product, Sale],
+        synchronize: true,
+      }
+    : dbType === 'mysql'
+    ? {
+        type: 'mysql',
+        host: process.env.DATABASE_HOST || 'localhost',
+        port: parseInt(process.env.DATABASE_PORT || '3306'),
+        username: process.env.DATABASE_USER || 'root',
+        password: process.env.DATABASE_PASS || 'root',
+        database: process.env.DATABASE_NAME || 'vendas_db',
+        entities: [User, Customer, Product, Sale],
+        synchronize: true,
+      }
+    : {
+        type: 'postgres',
+        host: process.env.DATABASE_HOST || 'localhost',
+        port: parseInt(process.env.DATABASE_PORT || '5432'),
+        username: process.env.DATABASE_USER || 'postgres',
+        password: process.env.DATABASE_PASS || 'password',
+        database: process.env.DATABASE_NAME || 'vendas_db',
+        entities: [User, Customer, Product, Sale],
+        synchronize: true,
+      }
+);
 
 async function seed() {
   await AppDataSource.initialize();
