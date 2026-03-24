@@ -32,65 +32,65 @@ sistema-vendas/
 
 ---
 
-## 🚀 Como rodar
+## 🚀 Como rodar o projeto localmente
+
+Para rodar o VendaSys na sua máquina, você vai precisar rodar o **Backend** (sua API) e o **Frontend** (sua interface) separadamente.
+
+Para isso, você vai precisar abrir **duas abas ou janelas do seu terminal**.
 
 ### Pré-requisitos
 - Node.js 18+
-- npm ou yarn
+- npm (já vem com o Node)
 
 ---
 
-### Backend
+### Terminal 1: Iniciando a API (Backend)
+
+Abra o terminal na pasta raiz do projeto e siga estes passos:
 
 ```bash
+# 1. Entre na pasta do backend
 cd backend
 
-# 1. Instalar dependências
+# 2. Instale as dependências
 npm install
 
-# 2. Criar arquivo .env (copiar do exemplo)
+# 3. Caso ainda não exista, crie o arquivo de ambiente
 cp .env.example .env
 
-# 3. Rodar o servidor
+# 4. Inicie o servidor
 npm run start:dev
-# → http://localhost:3000/api
-# → Swagger: http://localhost:3000/api/docs
 ```
+A API ficará rodando no endereço `http://localhost:3000/api`.
+O banco de dados (SQLite) será criado automaticamente no arquivo `database.sqlite` logo que a API subir.
 
-O banco de dados SQLite é criado automaticamente em `database.sqlite`.
-
-**Criar o admin padrão:**
+**Criar o admin padrão inicial:**
+Com a API rodando (ou num terceiro terminal), rode o comando abaixo para popular o banco de dados com seus dados de teste:
 ```bash
 npx ts-node -r tsconfig-paths/register scripts/seed.ts
-# Login: admin@sistema.com / admin123
-```
-
-Para usar PostgreSQL, edite o `.env`:
-```env
-DATABASE_TYPE=postgres
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_USER=postgres
-DATABASE_PASS=sua_senha
-DATABASE_NAME=vendas_db
+# Usuário de teste: admin@sistema.com
+# Senha: admin123
 ```
 
 ---
 
-### Frontend
+### Terminal 2: Iniciando o Painel (Frontend)
+
+Mantenha o terminal 1 aberto e rodando! Abra **uma nova aba** do terminal, vá para a raiz do projeto e siga:
 
 ```bash
+# 1. Entre na pasta do frontend
 cd frontend
 
-# 1. Instalar dependências
+# 2. Instale as dependências
 npm install
 
-# 2. Rodar o dev server
+# 3. Inicie o servidor do painel
 npm run dev
-# → http://localhost:5173
 ```
 
-O Vite já faz proxy de `/api` → `http://localhost:3000`.
+Pronto! Acesse o painel pelo seu navegador através do link `http://localhost:5173`.
+*(O sistema já está configurado para enxergar automaticamente a API que você deixou rodando na porta 3000).*
 
 ---
 
